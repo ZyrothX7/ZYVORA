@@ -3,7 +3,6 @@ package com.zyvora.social;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -170,20 +169,19 @@ public class RegisterActivity extends Activity {
 
         create.setOnClickListener(v -> {
 
-    Toast.makeText(RegisterActivity.this,
-        "BUTTON CLICKED!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                RegisterActivity.this,
+                "BUTTON CLICKED!",
+                Toast.LENGTH_SHORT
+            ).show();
 
-    String fullName = name.getText().toString().trim();
-            String fullName = name.getText().toString().trim();
-            String userName = username.getText().toString().trim();
-            String emailAddress = email.getText().toString().trim();
-            String pass = password.getText().toString();
-            String confirmPass = confirm.getText().toString();
-
-            if (fullName.isEmpty()) {
+            if (name.getText().toString().trim().isEmpty()) {
                 showError(name, "Enter your full name");
                 return;
             }
+
+            String userName =
+                username.getText().toString().trim();
 
             if (userName.isEmpty()) {
                 showError(username, "Choose a username");
@@ -196,11 +194,17 @@ public class RegisterActivity extends Activity {
                 return;
             }
 
+            String emailAddress =
+                email.getText().toString().trim();
+
             if (emailAddress.isEmpty() ||
                 !Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()) {
                 showError(email, "Enter a valid email address");
                 return;
             }
+
+            String pass = password.getText().toString();
+            String confirmPass = confirm.getText().toString();
 
             if (pass.length() < 8) {
                 showError(password,

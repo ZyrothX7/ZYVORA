@@ -7,13 +7,15 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.view.Gravity;
 import android.text.InputType;
+import android.util.Patterns;
+import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 public class RegisterActivity extends Activity {
 
@@ -64,9 +66,12 @@ public class RegisterActivity extends Activity {
         button.setMinimumHeight(0);
         button.setMinWidth(0);
         button.setMinimumWidth(0);
-        button.setBackground(
-            roundedBackground(purple, 12)
-        );
+        button.setBackground(roundedBackground(purple, 12));
+    }
+
+    void showError(EditText field, String message) {
+        field.setError(message);
+        field.requestFocus();
     }
 
     @Override
@@ -162,6 +167,54 @@ public class RegisterActivity extends Activity {
             new LinearLayout.LayoutParams(-1, dp(55));
         loginParams.topMargin = dp(15);
         layout.addView(login, loginParams);
+
+        create.setOnClickListener(v -> {
+
+            String fullName = name.getText().toString().trim();
+            String userName = username.getText().toString().trim();
+            String emailAddress = email.getText().toString().trim();
+            String pass = password.getText().toString();
+            String confirmPass = confirm.getText().toString();
+
+            if (fullName.isEmpty()) {
+                showError(name, "Enter your full name");
+                return;
+            }
+
+            if (userName.isEmpty()) {
+                showError(username, "Choose a username");
+                return;
+            }
+
+            if (!userName.matches("[a-zA-Z0-9_]{3,20}")) {
+                showError(username,
+                    "Use 3-20 letters, numbers or underscores");
+                return;
+            }
+
+            if (emailAddress.isEmpty() ||
+                !Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()) {
+                showError(email, "Enter a valid email address");
+                return;
+            }
+
+            if (pass.length() < 8) {
+                showError(password,
+                    "Password must contain at least 8 characters");
+                return;
+            }
+
+            if (!pass.equals(confirmPass)) {
+                showError(confirm, "Passwords do not match");
+                return;
+            }
+
+            Toast.makeText(
+                RegisterActivity.this,
+                "All checks passed! Registration is ready for the next step.",
+                Toast.LENGTH_LONG
+            ).show();
+        });
 
         login.setOnClickListener(v -> finish());
 

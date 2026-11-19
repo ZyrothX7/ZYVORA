@@ -170,6 +170,10 @@ public class RegisterActivity extends Activity {
 
         create.setOnClickListener(v -> {
 
+    Toast.makeText(RegisterActivity.this,
+        "BUTTON CLICKED!", Toast.LENGTH_SHORT).show();
+
+    String fullName = name.getText().toString().trim();
             String fullName = name.getText().toString().trim();
             String userName = username.getText().toString().trim();
             String emailAddress = email.getText().toString().trim();

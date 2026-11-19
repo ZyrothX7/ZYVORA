@@ -1,4 +1,4 @@
-
+k
 package com.zyvora.social;
 
 import android.app.Activity;
@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Canvas;
 import android.graphics.Typeface;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
+import android.graphics.Canvas;
+import android.graphics.RectF;
 import android.view.View;
 import android.view.Gravity;
 import android.view.animation.DecelerateInterpolator;
@@ -28,12 +31,15 @@ public class HomeActivity extends Activity {
     private LinearLayout navigation;
 
     private View[] pages = new View[4];
+    private HexIcon[] icons = new HexIcon[4];
+    private TextView[] labels = new TextView[4];
+
     private String[] names = {
         "FEED", "FRIENDS", "ADD", "PROFILE"
     };
 
     private String[] symbols = {
-        "F", "♡", "+", "P"
+        "▶", "♡", "+", "◇"
     };
 
     private int selected = 0;
@@ -45,12 +51,19 @@ public class HomeActivity extends Activity {
             getResources().getDisplayMetrics().density + 0.5f);
     }
 
-    private GradientDrawable rounded(
-        int color, int radius
-    ) {
-        GradientDrawable d = new GradientDrawable();
-        d.setColor(color);
-        d.setCornerRadius(dp(radius));
+    private GradientDrawable glassBackground() {
+        GradientDrawable d = new GradientDrawable(
+            GradientDrawable.Orientation.TOP_BOTTOM,
+            new int[] {
+                Color.rgb(49, 37, 70),
+                Color.rgb(23, 18, 34),
+                Color.rgb(13, 12, 21)
+            }
+        );
+
+        d.setCornerRadius(dp(25));
+        d.setStroke(dp(1), Color.argb(100, 190, 155, 255));
+
         return d;
     }
 
@@ -91,22 +104,28 @@ public class HomeActivity extends Activity {
             new LinearLayout.LayoutParams(-1, dp(82));
 
         navParams.setMargins(dp(14), dp(5), dp(14), dp(9));
+
         root.addView(navFrame, navParams);
 
-        navFrame.setBackground(
-            rounded(Color.rgb(24, 19, 36), 23)
-        );
+        navFrame.setBackground(glassBackground());
+        navFrame.setElevation(dp(12));
+        navFrame.setClipChildren(false);
+        navFrame.setClipToPadding(false);
 
         indicator = new LiquidIndicator();
 
-        navFrame.addView(indicator,
-            new FrameLayout.LayoutParams(-1, -1));
+        navFrame.addView(
+            indicator,
+            new FrameLayout.LayoutParams(-1, -1)
+        );
 
         navigation = new LinearLayout(this);
         navigation.setOrientation(LinearLayout.HORIZONTAL);
 
-        navFrame.addView(navigation,
-            new FrameLayout.LayoutParams(-1, -1));
+        navFrame.addView(
+            navigation,
+            new FrameLayout.LayoutParams(-1, -1)
+        );
 
         for (int i = 0; i < 4; i++) {
             final int index = i;
@@ -123,9 +142,10 @@ public class HomeActivity extends Activity {
 
         setContentView(root);
 
-        navigation.post(() ->
-            indicator.setPosition(0)
-        );
+        navigation.post(() -> {
+            indicator.setPosition(0);
+            updateTabStyles();
+        });
     }
 
     private void createPages() {
@@ -143,7 +163,7 @@ public class HomeActivity extends Activity {
             "Your posts, memories and profile"
         };
 
-        String[] icons = {
+        String[] pageIcons = {
             "▶", "♡", "+", "◇"
         };
 
@@ -153,7 +173,7 @@ public class HomeActivity extends Activity {
             page.setGravity(Gravity.CENTER);
             page.setPadding(dp(24), dp(24), dp(24), dp(24));
 
-            TextView icon = text(icons[i], 54, purple);
+            TextView icon = text(pageIcons[i], 54, purple);
             page.addView(icon);
 
             TextView title = text(titles[i], 22, white);
@@ -179,7 +199,10 @@ public class HomeActivity extends Activity {
             FrameLayout.LayoutParams pageParams =
                 new FrameLayout.LayoutParams(-1, -1);
 
-            page.setVisibility(i == 0 ? View.VISIBLE : View.GONE);
+            page.setVisibility(
+                i == 0 ? View.VISIBLE : View.GONE
+            );
+
             screenContainer.addView(page, pageParams);
         }
     }
@@ -189,23 +212,35 @@ public class HomeActivity extends Activity {
         tab.setOrientation(LinearLayout.VERTICAL);
         tab.setGravity(Gravity.CENTER);
 
-        HexIcon icon = new HexIcon(symbols[index]);
+        icons[index] = new HexIcon(symbols[index]);
 
         LinearLayout.LayoutParams iconParams =
-            new LinearLayout.LayoutParams(dp(34), dp(34));
+            new LinearLayout.LayoutParams(dp(35), dp(35));
 
-        tab.addView(icon, iconParams);
+        tab.addView(icons[index], iconParams);
 
-        TextView label = text(names[index], 9, white);
-        label.setTypeface(Typeface.DEFAULT_BOLD);
+        labels[index] = text(names[index], 9, white);
+        labels[index].setTypeface(Typeface.DEFAULT_BOLD);
 
         LinearLayout.LayoutParams labelParams =
             new LinearLayout.LayoutParams(-1, -2);
 
         labelParams.topMargin = dp(3);
-        tab.addView(label, labelParams);
+        tab.addView(labels[index], labelParams);
 
         return tab;
+    }
+
+    private void updateTabStyles() {
+        for (int i = 0; i < 4; i++) {
+            boolean active = i == selected;
+
+            icons[i].setActive(active);
+
+            labels[i].setTextColor(
+                active ? Color.rgb(210, 185, 255) : white
+            );
+        }
     }
 
     private void selectTab(int next) {
@@ -220,13 +255,14 @@ public class HomeActivity extends Activity {
         View newPage = pages[next];
 
         newPage.setVisibility(View.VISIBLE);
+
         newPage.setTranslationX(
             direction * screenContainer.getWidth()
         );
 
         newPage.animate()
             .translationX(0)
-            .setDuration(380)
+            .setDuration(420)
             .setInterpolator(new DecelerateInterpolator())
             .start();
 
@@ -234,7 +270,7 @@ public class HomeActivity extends Activity {
             .translationX(
                 -direction * screenContainer.getWidth()
             )
-            .setDuration(380)
+            .setDuration(420)
             .setInterpolator(new DecelerateInterpolator())
             .withEndAction(() -> {
                 oldPage.setVisibility(View.GONE);
@@ -244,7 +280,9 @@ public class HomeActivity extends Activity {
             .start();
 
         animateLiquid(previous, next);
+
         selected = next;
+        updateTabStyles();
     }
 
     private void animateLiquid(int from, int to) {
@@ -252,16 +290,23 @@ public class HomeActivity extends Activity {
             liquidAnimator.cancel();
         }
 
-        liquidAnimator = ValueAnimator.ofFloat(from, to);
-        liquidAnimator.setDuration(480);
+        liquidAnimator = ValueAnimator.ofFloat(0f, 1f);
+        liquidAnimator.setDuration(420);
+
         liquidAnimator.setInterpolator(
             new DecelerateInterpolator()
         );
 
         liquidAnimator.addUpdateListener(animation -> {
-            indicator.setPosition(
-                (float) animation.getAnimatedValue()
-            );
+            float t = (float) animation.getAnimatedValue();
+
+            float position = from + (to - from) * t;
+
+            // Liquid stretches while travelling.
+            float stretch = 1f +
+                (float) Math.sin(Math.PI * t) * 0.55f;
+
+            indicator.setLiquid(position, stretch);
         });
 
         liquidAnimator.start();
@@ -270,16 +315,41 @@ public class HomeActivity extends Activity {
     private class LiquidIndicator extends View {
 
         Paint paint = new Paint(3);
+
         float position = 0;
+        float stretch = 1f;
 
         LiquidIndicator() {
             super(HomeActivity.this);
-            paint.setStyle(Paint.Style.FILL);
+            setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
 
         void setPosition(float value) {
             position = value;
             invalidate();
+        }
+
+        void setLiquid(float value, float amount) {
+            position = value;
+            stretch = amount;
+            invalidate();
+        }
+
+        private Path makePath(
+            float left, float top,
+            float right, float bottom,
+            float radius
+        ) {
+            Path path = new Path();
+            RectF rect = new RectF(
+                left, top, right, bottom
+            );
+
+            path.addRoundRect(
+                rect, radius, radius, Path.Direction.CW
+            );
+
+            return path;
         }
 
         @Override
@@ -289,58 +359,86 @@ public class HomeActivity extends Activity {
             float segment = getWidth() / 4f;
             float center = segment * (position + 0.5f);
 
-            float width = segment * 0.78f;
-            float height = dp(55);
+            float baseWidth = segment * 0.78f;
+            float width = baseWidth * stretch;
+
+            float height = dp(56);
 
             float left = center - width / 2;
             float right = center + width / 2;
             float top = (getHeight() - height) / 2;
             float bottom = top + height;
 
-            Path path = new Path();
+            float radius = dp(19);
 
-            path.moveTo(left + dp(12), top);
-            path.lineTo(right - dp(12), top);
-
-            path.cubicTo(
-                right, top,
-                right, top + dp(8),
-                right, top + dp(17)
+            Path path = makePath(
+                left, top, right, bottom, radius
             );
 
-            path.lineTo(right, bottom - dp(17));
-
-            path.cubicTo(
-                right, bottom - dp(5),
-                right - dp(5), bottom,
-                right - dp(17), bottom
-            );
-
-            path.lineTo(left + dp(17), bottom);
-
-            path.cubicTo(
-                left, bottom,
-                left, bottom - dp(8),
-                left, bottom - dp(17)
-            );
-
-            path.lineTo(left, top + dp(17));
-
-            path.cubicTo(
-                left, top + dp(5),
-                left + dp(5), top,
-                left + dp(12), top
-            );
-
-            path.close();
-
-            paint.setColor(Color.argb(85, 155, 105, 255));
+            // Outer purple glow.
+            paint.clearShadowLayer();
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(dp(7));
+            paint.setColor(Color.argb(25, 170, 120, 255));
             canvas.drawPath(path, paint);
 
+            // Main liquid glass body.
+            paint.setStyle(Paint.Style.FILL);
+            paint.setShader(new LinearGradient(
+                left, top, left, bottom,
+                new int[] {
+                    Color.argb(115, 190, 145, 255),
+                    Color.argb(75, 120, 75, 190),
+                    Color.argb(105, 65, 40, 110)
+                },
+                null,
+                Shader.TileMode.CLAMP
+            ));
+
+            canvas.drawPath(path, paint);
+            paint.setShader(null);
+
+            // Neon glass border.
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(dp(1.2f));
+            paint.setColor(
+                Color.argb(210, 205, 175, 255)
+            );
+
+            canvas.drawPath(path, paint);
+
+            // Inner reflection.
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(dp(1));
-            paint.setColor(Color.argb(180, 190, 155, 255));
-            canvas.drawPath(path, paint);
+            paint.setColor(
+                Color.argb(105, 255, 255, 255)
+            );
+
+            Path reflection = new Path();
+
+            reflection.moveTo(
+                left + radius, top + dp(3)
+            );
+
+            reflection.lineTo(
+                right - radius, top + dp(3)
+            );
+
+            canvas.drawPath(reflection, paint);
+
+            // Bottom purple reflection.
+            paint.setStrokeWidth(dp(2));
+            paint.setColor(
+                Color.argb(85, 180, 120, 255)
+            );
+
+            canvas.drawLine(
+                left + radius,
+                bottom - dp(3),
+                right - radius,
+                bottom - dp(3),
+                paint
+            );
 
             paint.setStyle(Paint.Style.FILL);
         }
@@ -350,10 +448,16 @@ public class HomeActivity extends Activity {
 
         Paint paint = new Paint(3);
         String symbol;
+        boolean active = false;
 
         HexIcon(String value) {
             super(HomeActivity.this);
             symbol = value;
+        }
+
+        void setActive(boolean value) {
+            active = value;
+            invalidate();
         }
 
         @Override
@@ -373,11 +477,43 @@ public class HomeActivity extends Activity {
             hex.lineTo(w * .04f, h * .5f);
             hex.close();
 
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(dp(1.5f));
-            paint.setColor(purple);
+            // Selected hexagon glow.
+            if (active) {
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setStrokeWidth(dp(5));
+                paint.setColor(
+                    Color.argb(35, 175, 115, 255)
+                );
+
+                canvas.drawPath(hex, paint);
+            }
+
+            // Hexagon interior.
+            paint.setStyle(Paint.Style.FILL);
+
+            paint.setColor(
+                active
+                    ? Color.argb(85, 155, 105, 255)
+                    : Color.argb(20, 255, 255, 255)
+            );
+
             canvas.drawPath(hex, paint);
 
+            // Neon outline.
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(
+                active ? dp(2) : dp(1.3f)
+            );
+
+            paint.setColor(
+                active
+                    ? Color.rgb(210, 180, 255)
+                    : purple
+            );
+
+            canvas.drawPath(hex, paint);
+
+            // Symbol.
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(white);
             paint.setTextSize(dp(16));
@@ -386,7 +522,8 @@ public class HomeActivity extends Activity {
 
             Paint.FontMetrics fm = paint.getFontMetrics();
 
-            float y = h / 2 - (fm.ascent + fm.descent) / 2;
+            float y = h / 2 -
+                (fm.ascent + fm.descent) / 2;
 
             canvas.drawText(symbol, w / 2, y, paint);
         }

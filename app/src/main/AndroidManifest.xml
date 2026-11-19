@@ -3,12 +3,28 @@
     package="com.zyvora.social">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:theme="@android:style/Theme.Material.NoActionBar"
         android:label="ZYVORA"
         android:icon="@drawable/zyvora_icon"
         android:allowBackup="false">
+
+        <activity
+            android:name=".SplashActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
 
         <activity
             android:name=".OtpActivity"
@@ -25,17 +41,6 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
-
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-        </activity>
 
     </application>
 </manifest>

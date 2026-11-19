@@ -1,4 +1,3 @@
-k
 package com.zyvora.social;
 
 import android.app.Activity;

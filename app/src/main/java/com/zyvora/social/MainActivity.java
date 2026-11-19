@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
 
         TextView description = new TextView(this);
         description.setText(
-            "Share your moments.\\nConnect with the world."
+            "Share your moments.\nConnect with the world."
         );
         description.setTextSize(15);
         description.setTextColor(Color.LTGRAY);

@@ -10,70 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout project
+      - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          accept-android-sdk-licenses: true
+          log-accepted-android-sdk-licenses: false
 
-      - name: Install Android platform
-        run: |
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Install Android SDK packages
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
-      - name: Build APK
-        run: |
-          set -e
-
-          SDK="$ANDROID_HOME"
-          BT="$SDK/build-tools/35.0.0"
-          PLATFORM="$SDK/platforms/android-35/android.jar"
-
-          mkdir -p app/build/classes app/build/dex
-
-          javac -source 8 -target 8 \
-            -classpath "$PLATFORM" \
-            -d app/build/classes \
-            app/src/main/java/com/zyvora/social/MainActivity.java
-
-          "$BT/d8" \
-            --lib "$PLATFORM" \
-            --min-api 23 \
-            --output app/build/dex \
-            app/build/classes/com/zyvora/social/MainActivity.class
-
-          "$BT/aapt2" link \
-            -o app/build/unsigned.apk \
-            -I "$PLATFORM" \
-            --manifest app/src/main/AndroidManifest.xml \
-            --min-sdk-version 23 \
-            --target-sdk-version 35 \
-            --version-code 1 \
-            --version-name 1.0
-
-          zip -q -j app/build/unsigned.apk app/build/dex/classes.dex
-
-          "$BT/zipalign" -f 4 \
-            app/build/unsigned.apk app/build/aligned.apk
-
-          keytool -genkeypair -v \
-            -keystore app/build/debug.keystore \
-            -storepass android \
-            -alias androiddebugkey \
-            -keypass android \
-            -dname "CN=Android Debug,O=Android,C=US" \
-            -keyalg RSA -keysize 2048 -validity 10000
-
-          "$BT/apksigner" sign \
-            --ks app/build/debug.keystore \
-            --ks-pass pass:android \
-            --key-pass pass:android \
-            --out app/build/ZYVORA.apk \
-            app/build/aligned.apk
-
-          "$BT/apksigner" verify app/build/ZYVORA.apk
+      - name: Build debug APK
+        run: ./gradlew --no-daemon assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ZYVORA-APK
-          path: app/build/ZYVORA.apk
+          name: ZYVORA-debug-APK
+          path: app/build/outputs/apk/debug/app-debug.apk

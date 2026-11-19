@@ -3,6 +3,7 @@ package com.zyvora.social;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -47,9 +48,7 @@ public class MainActivity extends Activity {
         layout.setGravity(Gravity.CENTER);
         layout.setPadding(dp(28), dp(24), dp(28), dp(24));
 
-        scroll.addView(layout, new ScrollView.LayoutParams(
-            -1, -1
-        ));
+        scroll.addView(layout, new ScrollView.LayoutParams(-1, -1));
 
         // LOGO
         TextView logo = new TextView(this);
@@ -58,7 +57,6 @@ public class MainActivity extends Activity {
         logo.setTextColor(purple);
         logo.setTypeface(Typeface.DEFAULT_BOLD);
         logo.setGravity(Gravity.CENTER);
-
         layout.addView(logo);
 
         // SUBTITLE
@@ -111,14 +109,21 @@ public class MainActivity extends Activity {
         login.setPadding(0, 0, 0, 0);
         login.setMinHeight(0);
         login.setMinimumHeight(0);
-        login.setBackground(
-            roundedBackground(purple, 9)
-        );
+        login.setBackground(roundedBackground(purple, 9));
 
         LinearLayout.LayoutParams lp =
             new LinearLayout.LayoutParams(-1, dp(54));
         lp.topMargin = dp(42);
         layout.addView(login, lp);
+
+        // OPEN LOGIN SCREEN
+        login.setOnClickListener(v -> {
+            Intent intent = new Intent(
+                MainActivity.this,
+                LoginActivity.class
+            );
+            startActivity(intent);
+        });
 
         // CREATE ACCOUNT BUTTON
         Button signup = new Button(this);

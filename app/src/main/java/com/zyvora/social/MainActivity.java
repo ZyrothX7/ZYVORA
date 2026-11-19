@@ -146,6 +146,23 @@ public class MainActivity extends Activity {
             ));
         });
 
+        // TEMPORARY MY PROFILE BUTTON
+        Button profile = new Button(this);
+        profile.setText("MY PROFILE");
+        prepareButton(profile, purple);
+
+        LinearLayout.LayoutParams pp =
+            new LinearLayout.LayoutParams(-1, dp(54));
+        pp.topMargin = dp(14);
+        layout.addView(profile, pp);
+
+        profile.setOnClickListener(v -> {
+            startActivity(new Intent(
+                MainActivity.this,
+                ProfileActivity.class
+            ));
+        });
+
         setContentView(scroll);
     }
 }

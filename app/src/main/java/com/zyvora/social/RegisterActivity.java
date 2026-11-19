@@ -169,12 +169,6 @@ public class RegisterActivity extends Activity {
 
         create.setOnClickListener(v -> {
 
-            Toast.makeText(
-                RegisterActivity.this,
-                "BUTTON CLICKED!",
-                Toast.LENGTH_SHORT
-            ).show();
-
             if (name.getText().toString().trim().isEmpty()) {
                 showError(name, "Enter your full name");
                 return;

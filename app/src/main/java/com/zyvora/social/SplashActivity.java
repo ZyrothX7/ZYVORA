@@ -5,7 +5,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Gravity;
+import android.view.Gravity;
 import android.graphics.drawable.*;
 import android.net.ConnectivityManager;
 import android.net.Network;

@@ -8,12 +8,10 @@
         android:label="ZYVORA"
         android:allowBackup="false">
 
-        <!-- LOGIN SCREEN -->
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
 
-        <!-- MAIN WELCOME SCREEN -->
         <activity
             android:name=".MainActivity"
             android:exported="true">

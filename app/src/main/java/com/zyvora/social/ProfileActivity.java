@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
@@ -59,7 +58,7 @@ public class ProfileActivity extends Activity {
         // PROFILE BANNER
         LinearLayout banner = new LinearLayout(this);
         banner.setOrientation(LinearLayout.VERTICAL);
-        banner.setPadding(dp(20), dp(14), dp(20), dp(16));
+        banner.setPadding(dp(20), dp(8), dp(20), dp(16));
         banner.setGravity(Gravity.BOTTOM);
         banner.setBackground(roundedBackground(
                 Color.rgb(78, 53, 125), 0));
@@ -67,15 +66,24 @@ public class ProfileActivity extends Activity {
         LinearLayout.LayoutParams bannerParams =
                 new LinearLayout.LayoutParams(-1, dp(175));
 
-        // EDIT PROFILE ICON
+        // TOP RIGHT EDIT ICON
+        LinearLayout editRow = new LinearLayout(this);
+        editRow.setOrientation(LinearLayout.HORIZONTAL);
+        editRow.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+
         TextView edit = createText("⚒︎", 30, white);
         edit.setGravity(Gravity.CENTER);
 
         LinearLayout.LayoutParams editParams =
-                new LinearLayout.LayoutParams(-1, dp(40));
-        editParams.bottomMargin = dp(25);
+                new LinearLayout.LayoutParams(dp(42), dp(42));
 
-        banner.addView(edit, editParams);
+        editRow.addView(edit, editParams);
+
+        LinearLayout.LayoutParams editRowParams =
+                new LinearLayout.LayoutParams(-1, dp(42));
+        editRowParams.bottomMargin = dp(12);
+
+        banner.addView(editRow, editRowParams);
 
         edit.setOnClickListener(v ->
                 Toast.makeText(

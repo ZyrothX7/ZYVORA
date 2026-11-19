@@ -146,6 +146,23 @@ public class MainActivity extends Activity {
             ));
         });
 
+        // TEMPORARY DEV PREVIEW BUTTON
+        Button preview = new Button(this);
+        preview.setText("👁  DEV PREVIEW");
+        prepareButton(preview, Color.rgb(65, 42, 100));
+
+        LinearLayout.LayoutParams previewParams =
+            new LinearLayout.LayoutParams(-1, dp(54));
+        previewParams.topMargin = dp(18);
+        layout.addView(preview, previewParams);
+
+        preview.setOnClickListener(v -> {
+            startActivity(new Intent(
+                MainActivity.this,
+                HomeActivity.class
+            ));
+        });
+
         setContentView(scroll);
     }
 }

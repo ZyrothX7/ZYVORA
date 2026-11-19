@@ -31,6 +31,19 @@ public class MainActivity extends Activity {
         return drawable;
     }
 
+    void prepareButton(Button button, int color) {
+        button.setTextColor(white);
+        button.setTextSize(14);
+        button.setAllCaps(false);
+        button.setGravity(Gravity.CENTER);
+        button.setPadding(0, 0, 0, 0);
+        button.setMinHeight(0);
+        button.setMinimumHeight(0);
+        button.setMinWidth(0);
+        button.setMinimumWidth(0);
+        button.setBackground(roundedBackground(color, 9));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,48 +115,38 @@ public class MainActivity extends Activity {
         // LOGIN BUTTON
         Button login = new Button(this);
         login.setText("LOG IN");
-        login.setTextSize(14);
-        login.setTextColor(white);
-        login.setAllCaps(false);
-        login.setGravity(Gravity.CENTER);
-        login.setPadding(0, 0, 0, 0);
-        login.setMinHeight(0);
-        login.setMinimumHeight(0);
-        login.setBackground(roundedBackground(purple, 9));
+        prepareButton(login, purple);
 
         LinearLayout.LayoutParams lp =
             new LinearLayout.LayoutParams(-1, dp(54));
         lp.topMargin = dp(42);
         layout.addView(login, lp);
 
-        // OPEN LOGIN SCREEN
         login.setOnClickListener(v -> {
-            Intent intent = new Intent(
+            startActivity(new Intent(
                 MainActivity.this,
                 LoginActivity.class
-            );
-            startActivity(intent);
+            ));
         });
 
         // CREATE ACCOUNT BUTTON
         Button signup = new Button(this);
         signup.setText("CREATE ACCOUNT");
-        signup.setTextSize(14);
-        signup.setTextColor(white);
-        signup.setAllCaps(false);
-        signup.setGravity(Gravity.CENTER);
-        signup.setPadding(0, 0, 0, 0);
-        signup.setMinHeight(0);
-        signup.setMinimumHeight(0);
-        signup.setBackground(
-            roundedBackground(Color.rgb(40, 35, 55), 9)
-        );
+        prepareButton(signup, Color.rgb(40, 35, 55));
 
         LinearLayout.LayoutParams cp =
             new LinearLayout.LayoutParams(-1, dp(54));
         cp.topMargin = dp(14);
         layout.addView(signup, cp);
 
+        signup.setOnClickListener(v -> {
+            startActivity(new Intent(
+                MainActivity.this,
+                RegisterActivity.class
+            ));
+        });
+
         setContentView(scroll);
     }
 }
+

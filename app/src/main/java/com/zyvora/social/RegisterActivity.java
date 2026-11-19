@@ -3,6 +3,7 @@ package com.zyvora.social;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -13,17 +14,21 @@ import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.ScrollView;
-import android.content.Intent;
 
 public class RegisterActivity extends Activity {
 
     int purple = Color.rgb(155, 105, 255);
     int background = Color.rgb(9, 10, 18);
 
+    int dp(float value) {
+        return (int) (value * getResources()
+            .getDisplayMetrics().density + 0.5f);
+    }
+
     GradientDrawable roundedBackground(int color, int radius) {
         GradientDrawable shape = new GradientDrawable();
         shape.setColor(color);
-        shape.setCornerRadius(radius);
+        shape.setCornerRadius(dp(radius));
         return shape;
     }
 
@@ -42,11 +47,26 @@ public class RegisterActivity extends Activity {
         input.setHintTextColor(Color.GRAY);
         input.setSingleLine(true);
         input.setInputType(type);
-        input.setPadding(18, 0, 18, 0);
+        input.setPadding(dp(18), 0, dp(18), 0);
         input.setBackground(roundedBackground(
             Color.rgb(28, 28, 42), 12
         ));
         return input;
+    }
+
+    void styleButton(Button button) {
+        button.setTextColor(Color.WHITE);
+        button.setTextSize(15);
+        button.setAllCaps(false);
+        button.setGravity(Gravity.CENTER);
+        button.setPadding(0, 0, 0, 0);
+        button.setMinHeight(0);
+        button.setMinimumHeight(0);
+        button.setMinWidth(0);
+        button.setMinimumWidth(0);
+        button.setBackground(
+            roundedBackground(purple, 12)
+        );
     }
 
     @Override
@@ -54,11 +74,13 @@ public class RegisterActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         ScrollView scroll = new ScrollView(this);
+        scroll.setFillViewport(true);
         scroll.setBackgroundColor(background);
+        scroll.setVerticalScrollBarEnabled(false);
 
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(28, 40, 28, 30);
+        layout.setPadding(dp(28), dp(40), dp(28), dp(30));
 
         scroll.addView(layout);
 
@@ -75,7 +97,7 @@ public class RegisterActivity extends Activity {
 
         LinearLayout.LayoutParams titleParams =
             new LinearLayout.LayoutParams(-1, -2);
-        titleParams.topMargin = 35;
+        titleParams.topMargin = dp(35);
         layout.addView(title, titleParams);
 
         TextView subtitle = makeText(
@@ -86,7 +108,7 @@ public class RegisterActivity extends Activity {
 
         LinearLayout.LayoutParams subParams =
             new LinearLayout.LayoutParams(-1, -2);
-        subParams.topMargin = 10;
+        subParams.topMargin = dp(10);
         layout.addView(subtitle, subParams);
 
         int textType = InputType.TYPE_CLASS_TEXT;
@@ -95,12 +117,17 @@ public class RegisterActivity extends Activity {
 
         EditText name = makeInput("Full name", textType);
         EditText username = makeInput("Username", textType);
+
         EditText email = makeInput(
             "Email address",
             InputType.TYPE_CLASS_TEXT |
             InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
         );
-        EditText password = makeInput("Password", passwordType);
+
+        EditText password = makeInput(
+            "Password", passwordType
+        );
+
         EditText confirm = makeInput(
             "Confirm password", passwordType
         );
@@ -111,21 +138,18 @@ public class RegisterActivity extends Activity {
 
         for (EditText field : fields) {
             LinearLayout.LayoutParams params =
-                new LinearLayout.LayoutParams(-1, 54);
-            params.topMargin = 18;
+                new LinearLayout.LayoutParams(-1, dp(54));
+            params.topMargin = dp(18);
             layout.addView(field, params);
         }
 
         Button create = new Button(this);
         create.setText("CREATE ACCOUNT");
-        create.setTextColor(Color.WHITE);
-        create.setTextSize(15);
-        create.setAllCaps(false);
-        create.setBackground(roundedBackground(purple, 12));
+        styleButton(create);
 
         LinearLayout.LayoutParams createParams =
-            new LinearLayout.LayoutParams(-1, 54);
-        createParams.topMargin = 30;
+            new LinearLayout.LayoutParams(-1, dp(54));
+        createParams.topMargin = dp(30);
         layout.addView(create, createParams);
 
         TextView login = makeText(
@@ -135,8 +159,8 @@ public class RegisterActivity extends Activity {
         login.setGravity(Gravity.CENTER);
 
         LinearLayout.LayoutParams loginParams =
-            new LinearLayout.LayoutParams(-1, 55);
-        loginParams.topMargin = 15;
+            new LinearLayout.LayoutParams(-1, dp(55));
+        loginParams.topMargin = dp(15);
         layout.addView(login, loginParams);
 
         login.setOnClickListener(v -> finish());

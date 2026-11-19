@@ -9,11 +9,13 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
 import android.text.InputType;
+import android.util.Patterns;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 public class LoginActivity extends Activity {
 
@@ -67,6 +69,11 @@ public class LoginActivity extends Activity {
         button.setBackground(
             roundedBackground(purple, 12)
         );
+    }
+
+    void showError(EditText field, String message) {
+        field.setError(message);
+        field.requestFocus();
     }
 
     @Override
@@ -159,11 +166,51 @@ public class LoginActivity extends Activity {
         signupParams.topMargin = dp(20);
         layout.addView(signup, signupParams);
 
+        login.setOnClickListener(v -> {
+
+            String emailOrUsername =
+                email.getText().toString().trim();
+
+            String pass = password.getText().toString();
+
+            if (emailOrUsername.isEmpty()) {
+                showError(email, "Enter your email or username");
+                return;
+            }
+
+            if (emailOrUsername.contains("@") &&
+                !Patterns.EMAIL_ADDRESS.matcher(
+                    emailOrUsername
+                ).matches()) {
+                showError(email, "Enter a valid email address");
+                return;
+            }
+
+            if (pass.isEmpty()) {
+                showError(password, "Enter your password");
+                return;
+            }
+
+            Toast.makeText(
+                LoginActivity.this,
+                "Login form is ready for authentication!",
+                Toast.LENGTH_LONG
+            ).show();
+        });
+
         signup.setOnClickListener(v -> {
             startActivity(new Intent(
                 LoginActivity.this,
                 RegisterActivity.class
             ));
+        });
+
+        forgot.setOnClickListener(v -> {
+            Toast.makeText(
+                LoginActivity.this,
+                "Password recovery will be available soon!",
+                Toast.LENGTH_SHORT
+            ).show();
         });
 
         setContentView(scroll);

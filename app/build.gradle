@@ -2,6 +2,31 @@ plugins {
     id 'com.android.application'
 }
 
+def supabaseConfig = new Properties()
+def configFile = rootProject.file("supabase.properties")
+
+if (configFile.exists()) {
+    configFile.withInputStream {
+        supabaseConfig.load(it)
+    }
+}
+
+def supabaseUrl = (
+    System.getenv("SUPABASE_URL")
+        ?: supabaseConfig.getProperty("SUPABASE_URL")
+        ?: ""
+).trim()
+
+def supabaseKey = (
+    System.getenv("SUPABASE_KEY")
+        ?: supabaseConfig.getProperty("SUPABASE_KEY")
+        ?: ""
+).trim()
+
+def escapeConfig = { value ->
+    value.replace("\\", "\\\\").replace("\"", "\\\"")
+}
+
 android {
     namespace 'com.zyvora.social'
     compileSdk 36
@@ -12,6 +37,18 @@ android {
         targetSdk 35
         versionCode 1
         versionName '1.0'
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    defaultConfig {
+        buildConfigField "String", "SUPABASE_URL",
+            "\"${escapeConfig(supabaseUrl)}\""
+
+        buildConfigField "String", "SUPABASE_KEY",
+            "\"${escapeConfig(supabaseKey)}\""
     }
 
     compileOptions {

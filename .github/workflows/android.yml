@@ -1,4 +1,3 @@
-
 name: Build ZYVORA APK
 
 on:
@@ -10,11 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-      ANDROID_HOME: /usr/local/lib/android/sdkenv:
-  ANDROID_HOME: /usr/local/lib/android/sdk
-  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-  SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}env:
+    env:
       ANDROID_HOME: /usr/local/lib/android/sdk
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
     steps:
       - name: Checkout repository
